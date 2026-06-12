@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>קטגוריות | איגוד הקעמפים</title>
+    <link rel="icon" type="image/png" href="logo.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Assistant', sans-serif;
+        }
+
+        body {
+            background-color: #fcfcfd;
+            color: #1e293b;
+            line-height: 1.7;
+            font-size: 16px;
+            text-align: center;
+            opacity: 0;
+            animation: fadeInPage 0.6s ease forwards;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+            transition: all 0.25s ease;
+        }
+
+        /* סרגל ניווט */
+        header {
+            background-color: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid #e2e8f0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 20px;
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 45px;
+        }
+
+        .logo-container img {
+            height: 42px;
+            display: block;
+            object-fit: contain;
+        }
+
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            gap: 30px;
+            justify-content: center;
+        }
+
+        .nav-menu li a {
+            color: #475569;
+            font-size: 15px;
+            font-weight: 500;
+            position: relative;
+            padding: 4px 0;
+            text-align: center;
+        }
+
+        .nav-menu li a:hover, .nav-menu li a.active {
+            color: #0f172a;
+            font-weight: 700;
+        }
+
+        .nav-menu li a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 2px;
+            background-color: #d97706;
+            transition: width 0.25s ease;
+        }
+
+        .nav-menu li a:hover::after, .nav-menu li a.active::after {
+            width: 100%;
+        }
+
+        .nav-left {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            justify-content: center;
+        }
+
+        .cart-btn {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background-color: #ffffff;
+            color: #0f172a;
+            padding: 9px 20px;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 14px;
+            border: 1px solid #cbd5e1;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+            justify-content: center;
+        }
+
+        .cart-btn:hover {
+            background-color: #f8fafc;
+            border-color: #94a3b8;
+        }
+
+        .cart-count {
+            background-color: #0f172a;
+            color: white;
+            font-size: 11px;
+            padding: 1px 6px;
+            border-radius: 4px;
+            font-weight: 700;
+        }
+
+        /* כותרת קטגוריות */
+        .categories-hero {
+            background: linear-gradient(180deg, #0f172a 0%, #1e293b 100%);
+            color: white;
+            padding: 60px 20px;
+            text-align: center;
+        }
+
+        .categories-hero h1 {
+            font-size: 38px;
+            font-weight: 800;
+            margin-bottom: 12px;
+            letter-spacing: -0.5px;
+        }
+
+        .categories-hero p {
+            font-size: 16px;
+            color: #94a3b8;
+            font-weight: 300;
+        }
+
+        /* אזור גריד הקטגוריות */
+        .catalog-section {
+            max-width: 1200px;
+            margin: 60px auto;
+            padding: 0 20px;
+        }
+
+        .categories-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 25px;
+        }
+
+        .category-card {
+            border-radius: 12px;
+            height: 240px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+            transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1), box-shadow 0.3s ease;
+            animation: cardSlideUp 0.5s ease-out backwards;
+        }
+
+        .category-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(180deg, rgba(15, 23, 42, 0.4) 0%, rgba(15, 23, 42, 0.75) 100%);
+            transition: background 0.3s ease;
+            z-index: 1;
+        }
+
+        .category-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 20px 30px -10px rgba(15, 23, 42, 0.3);
+        }
+
+        .category-card:hover::before {
+            background: linear-gradient(180deg, rgba(217, 119, 6, 0.3) 0%, rgba(15, 23, 42, 0.85) 100%);
+        }
+
+        .category-content {
+            position: relative;
+            z-index: 2;
+            color: #ffffff;
+            padding: 20px;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .category-content h3 {
+            font-size: 24px;
+            font-weight: 800;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+            transition: transform 0.3s ease;
+        }
+
+        .category-card:hover .category-content h3 {
+            transform: scale(1.05);
+        }
+
+        .category-content p {
+            font-size: 14.5px;
+            color: #e2e8f0;
+            font-weight: 400;
+            max-width: 280px;
+            margin: 0 auto;
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+        }
+
+        @keyframes fadeInPage {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes cardSlideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .category-card:nth-child(1)  { animation-delay: 0.05s; }
+        .category-card:nth-child(2)  { animation-delay: 0.10s; }
+        .category-card:nth-child(3)  { animation-delay: 0.15s; }
+        .category-card:nth-child(4)  { animation-delay: 0.20s; }
+        .category-card:nth-child(5)  { animation-delay: 0.25s; }
+        .category-card:nth-child(6)  { animation-delay: 0.30s; }
+        .category-card:nth-child(7)  { animation-delay: 0.35s; }
+        .category-card:nth-child(8)  { animation-delay: 0.40s; }
+        .category-card:nth-child(9)  { animation-delay: 0.45s; }
+        .category-card:nth-child(10) { animation-delay: 0.50s; }
+        .category-card:nth-child(11) { animation-delay: 0.55s; }
+        .category-card:nth-child(12) { animation-delay: 0.60s; }
+        .category-card:nth-child(13) { animation-delay: 0.65s; }
+        .category-card:nth-child(14) { animation-delay: 0.70s; }
+        .category-card:nth-child(15) { animation-delay: 0.75s; }
+
+        footer {
+            background-color: #0f172a;
+            color: #64748b;
+            text-align: center;
+            padding: 35px 20px;
+            font-size: 14px;
+            margin-top: 100px;
+            border-top: 1px solid #1e293b;
+        }
+
+        /* ============= RESPONSIVE DESIGN ============= */
+        
+        @media (max-width: 1024px) {
+            .nav-right { gap: 30px; }
+            .nav-menu { gap: 20px; }
+            .nav-menu li a { font-size: 14px; }
+            .categories-hero h1 { font-size: 32px; }
+            .categories-hero p { font-size: 15px; }
+            .catalog-section { margin: 50px auto; }
+            .categories-grid { grid-template-columns: repeat(2, 1fr); gap: 20px; }
+            .category-card { height: 220px; }
+        }
+
+        @media (max-width: 768px) {
+            .nav-container { flex-direction: column; gap: 12px; padding: 12px 15px; }
+            .nav-right { flex-direction: column; gap: 15px; width: 100%; }
+            .logo-container img { height: 36px; }
+            .nav-menu { flex-direction: column; gap: 10px; width: 100%; }
+            .nav-menu li a { font-size: 13px; }
+            .nav-left { width: 100%; }
+            .cart-btn { width: 100%; justify-content: center; padding: 8px 15px; }
+            
+            .categories-hero { padding: 40px 15px; }
+            .categories-hero h1 { font-size: 26px; margin-bottom: 8px; }
+            .categories-hero p { font-size: 14px; }
+            
+            .catalog-section { margin: 35px auto; padding: 0 15px; }
+            .categories-grid { grid-template-columns: 1fr; gap: 15px; }
+            .category-card { height: 200px; }
+            .category-content h3 { font-size: 20px; }
+            .category-content p { font-size: 13px; max-width: 250px; }
+            
+            footer { padding: 25px 15px; font-size: 13px; margin-top: 60px; }
+        }
+
+        @media (max-width: 480px) {
+            .nav-container { gap: 10px; padding: 10px 12px; }
+            .nav-right { gap: 12px; }
+            .logo-container img { height: 32px; }
+            .nav-menu li a { font-size: 12px; }
+            .cart-btn { padding: 7px 12px; font-size: 11px; }
+            
+            .categories-hero { padding: 30px 12px; }
+            .categories-hero h1 { font-size: 20px; }
+            .categories-hero p { font-size: 12px; }
+            
+            .catalog-section { margin: 20px auto; padding: 0 12px; }
+            .category-card { height: 180px; }
+            .category-content { padding: 15px; gap: 8px; }
+            .category-content h3 { font-size: 17px; }
+            .category-content p { font-size: 12px; }
+            
+            footer { padding: 20px 12px; font-size: 12px; margin-top: 40px; }
+        }
+
+        @media (max-width: 360px) {
+            .nav-right { gap: 10px; }
+            .logo-container img { height: 28px; }
+            .nav-menu li a { font-size: 11px; }
+            .categories-hero h1 { font-size: 18px; }
+            .categories-hero p { font-size: 11px; }
+            .category-content h3 { font-size: 15px; }
+            .category-content p { font-size: 11px; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="nav-container">
+            <div class="nav-right">
+                <div class="logo-container">
+                    <a href="index.html"><img src="logo.png" alt="logo.png"></a>
+                </div>
+                <ul class="nav-menu">
+                    <li><a href="index.html">דף הבית</a></li>
+                    <li><a href="categories.html" class="active">קטגוריות</a></li>
+                    <li><a href="contact.html">יצירת קשר</a></li>
+                </ul>
+            </div>
+            
+            <div class="nav-left">
+                <a href="#" class="cart-btn">
+                    <span class="cart-icon">🛒</span>
+                    <span>הסל שלי</span>
+                    <span class="cart-count">0</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <section class="categories-hero">
+        <h1>כל מה שצריך לקעמפ, במקום אחד</h1>
+        <p>בחרו קטגוריה וצפו בנותני השירות המובילים ובמחירים הבלעדיים לאיגוד</p>
+    </section>
+
+     <main class="catalog-section">
+        <div class="categories-grid">
+            <a href="ציוד טכני.html" class="category-card" style="background-image: url('images/ציוד טכני.jpg');">
+                <div class="category-content">
+                    <h3>ציוד טכני</h3>
+                    <p>מערך טכנולוגי מתקדם הכולל מסכי לדים (LED) מהשורה הראשונה, במות מקצועיות ומערכות הגברה ותאורה עוצמתיות, המעניקים מעטפת טכנית מושלמת לכל אירוע.</p>
+                </div>
+            </a>
+
+              <a href="אטרקציות.html" class="category-card" style="background-image: url('images/אטרקציות.jpg');">
+                <div class="category-content">
+                    <h3>אטרקציות </h3>
+                    <p>מתחמי פארקים ניידים, מתקני מים חווייתיים, אטרקציות יבשות ופעילויות אתגר ייחודיות, המציעים שילוב מושלם של אדרנלין, קצב וחוויה בלתי נשכחת.</p>
+                </div>
+            </a>
+
+             <a href="תוכניות.html" class="category-card" style="background-image: url('images/תוכניות.jpg');">
+                <div class="category-content">
+                    <h3>תוכניות </h3>
+                   <p>הרצאות מרתקות מפי המרצים המובילים ותוכניות תוכן ייעודיות למתחם, היוצרות עניין רב, חיבור קבוצתי ואווירה תוססת ומלאת ערך לאורך כל שעות היום.</p>
+                </div>
+
+
+                <a href="הסעות.html" class="category-card" style="background-image: url('images/הסעות.jpg');">
+                <div class="category-content">
+                    <h3>הסעות </h3>
+                    <p> פתרונות תחבורה מתקדמים,  אוטובוסים ומיניבוסים חדישים, נהגים מקצועיים ועמידה קפדנית בזמנים, המבטיחים ניהול לו"ז יעיל, בטוח ושקט.</p>     
+                </div>
+
+
+                      <a href="תזמורות.html" class="category-card" style="background-image: url('images/תזמורות.jpg');">
+                <div class="category-content">
+                    <h3>תזמורות </h3>
+                   <p>זמרים מובילים, תזמורות והרכבים מקצועיים בביצועים חיים, מקהלות מובילות, הפקות קולולם אינטראקטיביות ותוכניות מוזיקה ייחודיות שירימו את האווירה לאירוע בלתי נשכח.</p>
+                </div>
+            </a>
+
+
+                     <a href="אוכל.html" class="category-card" style="background-image: url('images/אוכל.jpg');">
+                <div class="category-content">
+                    <h3>אוכל </h3>
+                  <p>שירותי קייטרינג יוקרתיים המציעים תפריט עשיר ומגוון מכל סוגי המטבחים, לצד דוכני מזון מעוצבים בקפידה, המעניקים שפע ואיכות ברמה הגבוהה ביותר.</p>
+                </div>
+            </a>
+
+                    
+        </div>
+    </main>
+
+    <footer>
+        <p>© 2026 איגוד-הקעמפים - פתרונות טכנולוגיים מתקדמים לאירועים. כל הזכויות שמורות.</p>
+    </footer>
+
+</body>
+</html>
