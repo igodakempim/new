@@ -94,48 +94,86 @@
 </div>
 
 <script>
-  const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyl17f92AztVCMzBg9wAepxVJXpwkUQLw4FMz8HCop62jDJRrUkeE_yjo03cccBc7Zdcg/exec';
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyaOWO52njqEt2J4ZazUHLuym6sxIs8cNn8k3fY8IF0Kj2tiRP53bA4kftAbVPVxGBgcw/exec';
 
-  async function handleLogin() {
-    const email = document.getElementById('email').value;
-    const password = document.getElementById('pass').value;
-    const msg = document.getElementById('msg');
-    
-    msg.innerText = "מתחבר...";
+async function handleLogin() {
 
-    try {
-      const res = await fetch(SCRIPT_URL, {
-        method: 'POST',
-        mode: 'cors',
-        body: JSON.stringify({ email, password, action: 'login' })
-      });
-      
-      const data = await res.json();
-      
-      if (data.status === 'SUCCESS') {
-        localStorage.setItem('isLoggedIn', 'true'); // שמירת מצב חיבור
-        msg.innerText = "התחברות הצליחה, מעביר אותך...";
-        setTimeout(() => { window.location.href = "index.html"; }, 1000);
-      } else if (data.status === 'FIRST_TIME') {
-        const newPass = prompt("זהו חיבור ראשון. נא להגדיר סיסמה חדשה:");
-        if (newPass) updatePassword(email, newPass);
-      } else {
-        msg.innerText = data.message;
-      }
-    } catch (error) {
-      msg.innerText = "שגיאה בחיבור לשרת.";
-    }
-  }
+  const email = document.getElementById('email').value.trim();
+  const password = document.getElementById('pass').value;
+  const msg = document.getElementById('msg');
 
-  async function updatePassword(email, newPass) {
+  msg.innerText = "מתחבר...";
+
+  try {
+
     const res = await fetch(SCRIPT_URL, {
-      method: 'POST',
-      mode: 'cors',
-      body: JSON.stringify({ email, password: newPass, action: 'update' })
+      method: "POST",
+      headers: {
+        "Content-Type": "text/plain;charset=utf-8"
+      },
+      body: JSON.stringify({
+        email,
+        password,
+        action: "login"
+      })
     });
+
     const data = await res.json();
-    document.getElementById('msg').innerText = data.message;
+
+    if (data.status === "SUCCESS") {
+
+      localStorage.setItem("isLoggedIn", "true");
+      localStorage.setItem("userEmail", email);
+
+      msg.innerText = "התחברות הצליחה";
+
+      setTimeout(() => {
+        window.location.href = "index.html";
+      }, 1000);
+
+    }
+    else if (data.status === "FIRST_TIME") {
+
+      const newPass = prompt("חיבור ראשון. הגדר סיסמה חדשה:");
+
+      if (newPass) {
+        await updatePassword(email, newPass);
+      }
+
+    }
+    else {
+
+      msg.innerText = data.message;
+
+    }
+
   }
+  catch(err) {
+
+    console.error(err);
+    msg.innerText = "שגיאה בחיבור לשרת";
+
+  }
+}
+
+async function updatePassword(email, newPass) {
+
+  const res = await fetch(SCRIPT_URL, {
+    method: "POST",
+    headers: {
+      "Content-Type": "text/plain;charset=utf-8"
+    },
+    body: JSON.stringify({
+      email,
+      password: newPass,
+      action: "update"
+    })
+  });
+
+  const data = await res.json();
+
+  document.getElementById("msg").innerText = data.message;
+}
 </script>
 </body>
 </html>
